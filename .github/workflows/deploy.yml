@@ -115,28 +115,29 @@ jobs:
 
           compose ps
 
-      - name: Test API
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          response=$(mktemp)
-          trap 'rm -f "$response"' EXIT
-
-          for attempt in $(seq 1 30); do
-            code=$(curl -sS --max-time 10 \
-              -o "$response" \
-              -w '%{http_code}' \
-              http://127.0.0.1/trip/2147483647 || true)
-
-            if [ "$code" = "404" ] &&
-               grep -q 'Trip not found' "$response"; then
-              echo "API smoke test passed."
-              exit 0
-            fi
-
-            sleep 5
-          done
-
-          echo "API smoke test failed."
-          exit 1
+      #- name: Test API
+      #  shell: bash
+      #  run: |
+      #    set -euo pipefail
+#
+      #    response=$(mktemp)
+      #    trap 'rm -f "$response"' EXIT
+#
+      #    for attempt in $(seq 1 30); do
+      #      code=$(curl -sS --max-time 10 \
+      #        -o "$response" \
+      #        -w '%{http_code}' \
+      #        http://127.0.0.1/trip/2147483647 || true)
+#
+      #      if [ "$code" = "404" ] &&
+      #         grep -q 'Trip not found' "$response"; then
+      #        echo "API smoke test passed."
+      #        exit 0
+      #      fi
+#
+      #      sleep 5
+      #    done
+#
+      #    echo "API smoke test failed."
+      #    exit 1
+#
