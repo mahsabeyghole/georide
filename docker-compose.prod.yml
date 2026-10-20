@@ -1,0 +1,66 @@
+services:
+  postgres:
+    restart: unless-stopped
+
+  rabbitmq:
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+
+  redis:
+    restart: unless-stopped
+
+  api:
+    image: ${DOCKERHUB_USERNAME}/georide-api:${IMAGE_TAG}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  location:
+    image: ${DOCKERHUB_USERNAME}/georide-location:${IMAGE_TAG}
+    restart: unless-stopped
+
+  matcher:
+    image: ${DOCKERHUB_USERNAME}/georide-matcher:${IMAGE_TAG}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      api:
+        condition: service_started
+      location:
+        condition: service_started
+
+  simulator-alpha:
+    image: ${DOCKERHUB_USERNAME}/georide-simulator:${IMAGE_TAG}
+    restart: unless-stopped
+
+  nginx:
+    restart: unless-stopped
+
+  loki:
+    restart: unless-stopped
+
+  promtail:
+    restart: unless-stopped
+
+  prometheus:
+    restart: unless-stopped
+
+  node-exporter:
+    restart: unless-stopped
+
+  cadvisor:
+    restart: unless-stopped
+
+  grafana:
+    restart: unless-stopped
